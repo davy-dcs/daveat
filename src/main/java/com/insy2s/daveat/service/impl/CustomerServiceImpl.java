@@ -4,26 +4,30 @@ import com.insy2s.daveat.domain.Customer;
 import com.insy2s.daveat.dto.CustomerRequest;
 import com.insy2s.daveat.dto.CustomerResponse;
 import com.insy2s.daveat.dto.mapper.ICustomerMapper;
-import com.insy2s.daveat.exception.CustomerNotFoundException;
+import com.insy2s.daveat.exception.customer.CustomerAlreadyExistException;
+import com.insy2s.daveat.exception.customer.CustomerNotFoundException;
 import com.insy2s.daveat.repository.ICustomerRepository;
 import com.insy2s.daveat.service.ICustomerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class CustomerService implements ICustomerService {
+public class CustomerServiceImpl implements ICustomerService {
     private final ICustomerRepository customerRepository;
     private final ICustomerMapper customerMapper;
 
     @Override
-    public CustomerResponse create(CustomerRequest customerRequest) {
-        return customerMapper.customerToCustomerResponse(customerRepository
-                .save(customerMapper.customerRequestToCustomer(customerRequest))
-        );
+    public CustomerResponse create(@Valid CustomerRequest customerRequest) {
+        if (customerRepository.existsByEmailOrPhone(customerRequest.email(), customerRequest.phone())) {
+            throw new CustomerAlreadyExistException("Email or phone is already use.");
+        }
+        return customerMapper.customerToCustomerResponse(customerRepository.save(customerMapper.customerRequestToCustomer(customerRequest)));
     }
 
     @Override

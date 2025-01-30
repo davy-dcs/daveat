@@ -1,8 +1,8 @@
 package com.insy2s.daveat.controller;
 
-import com.insy2s.daveat.domain.Customer;
 import com.insy2s.daveat.dto.CustomerRequest;
 import com.insy2s.daveat.dto.CustomerResponse;
+import com.insy2s.daveat.exception.customer.CustomerAlreadyExistException;
 import com.insy2s.daveat.service.ICustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
